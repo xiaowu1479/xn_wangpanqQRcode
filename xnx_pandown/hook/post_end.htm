@@ -1,0 +1,35 @@
+<?php
+?>
+<div class="modal fade" id="xnxPandownModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:600px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-cloud-down me-2"></i><?php echo lang('xnx_pandown_modal_title');?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <textarea class="form-control" id="xnxPandownInput" rows="3" placeholder="<?php echo lang('xnx_pandown_modal_placeholder');?>"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="xnxPandownCode" class="form-label small"><?php echo lang('xnx_pandown_code_label');?></label>
+                    <input type="text" class="form-control" id="xnxPandownCode" placeholder="<?php echo lang('xnx_pandown_code_placeholder');?>">
+                </div>
+                <div class="mb-3" id="xnxPandownPreview" style="display:none;">
+                    <small class="text-success"><?php echo lang('xnx_pandown_url_preview');?></small>
+                    <code id="xnxPandownUrlPreview" class="text-break"></code>
+                </div>
+                <div class="alert alert-info py-2 small mb-0">
+                    <i class="ti ti-info-circle me-1"></i>
+                    <?php echo lang('xnx_pandown_modal_hint');?>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><?php echo lang('xnx_pandown_modal_cancel');?></button>
+                <button type="button" class="btn btn-primary" id="xnxPandownSubmit"><?php echo lang('xnx_pandown_modal_submit');?></button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php
+?>

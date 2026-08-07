@@ -1,0 +1,25 @@
+{
+    "name": "网盘链接转二维码",
+    "brief": "将网盘链接转换为带二维码的下载按钮，支持百度/夸克/UC/迅雷/阿里云盘等网盘<br>开发者：小悟大人",
+    "version": "1.1.0",
+    "bbs_version": "1.1",
+    "changelog": {
+        "1.1.0": ["新增：支持提取码功能，二维码弹窗中显示并可一键复制提取码", "新增：编辑器粘贴分享内容时自动识别提取码并填入输入框", "新增：支持光鸭云盘（guangyapan.com）链接识别", "新增：二维码图片增加边框样式，视觉更清晰", "优化：编辑器工具栏按钮定位修复，正确显示在 AI 按钮右侧", "优化：移除重复按钮，统一由 JS 动态创建工具栏按钮", "优化：修复 icon.png 作为插件图标和工具栏图标正常显示"],
+        "1.0.0": ["首次发布：将网盘分享链接转为带二维码的下载按钮", "支持百度、夸克、UC、迅雷、阿里云盘等主流网盘", "支持编辑器工具栏按钮快捷插入网盘链接", "支持后台设置自动清除帖子对应的二维码缓存"]
+    },
+    "type": "plugin",
+    "hooks_rank": {
+        "model_inc_file.php": 10,
+        "index_route_case_end.php": 10,
+        "editor_custom_btns_end.php": 10,
+        "post_end.htm": 10,
+        "post_js.htm": 10,
+        "thread_message_before.htm": 10,
+        "footer_js_after.htm": 10,
+        "model_thread_delete_end.php": 10,
+        "lang_zh_cn_bbs.php": 10
+    },
+    "overwrites_rank": {},
+    "dependencies": {},
+    "author": "小悟大人"
+}

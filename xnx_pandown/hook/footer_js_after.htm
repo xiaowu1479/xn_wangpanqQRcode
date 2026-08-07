@@ -1,0 +1,120 @@
+<?php if (!empty($GLOBALS['xnx_has_pandown'])):
+$_is_mobile = preg_match('/(android|iphone|ipad|ipod|mobile|blackberry|iemobile|opera mini|windows phone)/i', $_SERVER['HTTP_USER_AGENT'] ?? '');
+?>
+<style>
+.xnx-pandown-download { margin: 1em 0; }
+.xnx-pandown-btn { display: inline-flex !important; align-items: center; gap: 0.5em; padding: 0.5em 1.25em !important; font-size: 0.95rem !important; text-decoration: none !important; cursor: pointer; background: #fafafa !important; border: 1px solid #e8e8e8 !important; color: #444 !important; box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.02) !important; border-radius: var(--bs-border-radius) !important; }
+.xnx-pandown-btn:hover { background: #f0f0f0 !important; border-color: #d8d8d8 !important; color: #222 !important; box-shadow: 0 2px 4px rgba(0,0,0,0.06) !important; }
+.xnx-pandown-code-box { display: none; margin-top: 10px; padding: 10px 16px; background: var(--bs-tertiary-bg, #f8f9fa); border: 1px dashed var(--bs-border-color, #dee2e6); border-radius: 8px; }
+.xnx-pandown-code-box.is-visible { display: block; }
+.xnx-pandown-code-value { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.1rem; font-weight: 600; color: var(--bs-primary, #0d6efd); letter-spacing: 0.05em; user-select: all; }
+</style>
+<div class="modal fade" id="xnxPandownQrModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="ti ti-cloud-down me-2"></i><?php echo lang('xnx_pandown_modal_title');?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="xnxPandownQrImage" src="" alt="QR" style="max-width:280px;width:100%;height:auto;padding:8px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;">
+                <div id="xnxPandownCodeBox" class="xnx-pandown-code-box">
+                    <div class="small text-body-secondary mb-1"><?php echo lang('xnx_pandown_code_label');?></div>
+                    <div class="d-flex align-items-center justify-content-center gap-2">
+                        <span id="xnxPandownCodeValue" class="xnx-pandown-code-value"></span>
+                        <button type="button" class="btn btn-sm btn-outline-primary" id="xnxPandownCopyCode"><?php echo lang('xnx_pandown_copy_code');?></button>
+                    </div>
+                </div>
+                <?php if ($_is_mobile): ?>
+                <div id="xnxPandownQrUrlDisplay" class="mt-2 p-2 bg-body-tertiary rounded text-break small text-body-secondary"></div>
+                <p class="mt-3">
+                    <a id="xnxPandownQrLink" href="#" target="_blank" rel="noopener" class="btn btn-primary"><?php echo lang('xnx_pandown_open_link');?></a>
+                    <button type="button" class="btn btn-outline-secondary" id="xnxPandownCopyBtn"><?php echo lang('xnx_pandown_copy_link');?></button>
+                </p>
+                <?php endif; ?>
+                <p class="text-muted small mt-3 mb-0"><?php echo lang('xnx_pandown_qr_tip');?></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.xnx-pandown-btn');
+    if (!btn) return;
+    var url = btn.getAttribute('data-url');
+    var qr = btn.getAttribute('data-qr');
+    var code = btn.getAttribute('data-code') || '';
+    if (!url) return;
+    var qrImg = document.getElementById('xnxPandownQrImage');
+    if (qrImg) qrImg.setAttribute('src', qr);
+    var qrLink = document.getElementById('xnxPandownQrLink');
+    if (qrLink) qrLink.setAttribute('href', url);
+    var codeBox = document.getElementById('xnxPandownCodeBox');
+    var codeValue = document.getElementById('xnxPandownCodeValue');
+    if (codeBox && codeValue) {
+        if (code !== '') {
+            codeValue.textContent = code;
+            codeBox.classList.add('is-visible');
+        } else {
+            codeBox.classList.remove('is-visible');
+        }
+    }
+    <?php if ($_is_mobile): ?>
+    var urlDisplay = document.getElementById('xnxPandownQrUrlDisplay');
+    if (urlDisplay) urlDisplay.textContent = url;
+    <?php endif; ?>
+    var modalEl = document.getElementById('xnxPandownQrModal');
+    if (modalEl) {
+        var modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+    }
+});
+
+<?php if ($_is_mobile): ?>
+var copyBtn = document.getElementById('xnxPandownCopyBtn');
+if (copyBtn) {
+    copyBtn.addEventListener('click', function() {
+        var link = document.getElementById('xnxPandownQrLink');
+        if (!link) return;
+        var url = link.getAttribute('href');
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(function() {
+                if (typeof XN !== 'undefined' && XN.toast) XN.toast('<?php echo addslashes(lang('xnx_pandown_link_copied'));?>', 'success');
+            });
+        } else {
+            var temp = document.createElement('input');
+            document.body.appendChild(temp);
+            temp.value = url;
+            temp.select();
+            document.execCommand('copy');
+            temp.remove();
+            if (typeof XN !== 'undefined' && XN.toast) XN.toast('<?php echo addslashes(lang('xnx_pandown_link_copied'));?>', 'success');
+        }
+    });
+}
+<?php endif; ?>
+
+var copyCodeBtn = document.getElementById('xnxPandownCopyCode');
+if (copyCodeBtn) {
+    copyCodeBtn.addEventListener('click', function() {
+        var val = document.getElementById('xnxPandownCodeValue');
+        if (!val) return;
+        var code = val.textContent;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(code).then(function() {
+                if (typeof XN !== 'undefined' && XN.toast) XN.toast('<?php echo addslashes(lang('xnx_pandown_code_copied'));?>', 'success');
+            });
+        } else {
+            var temp = document.createElement('input');
+            document.body.appendChild(temp);
+            temp.value = code;
+            temp.select();
+            document.execCommand('copy');
+            temp.remove();
+            if (typeof XN !== 'undefined' && XN.toast) XN.toast('<?php echo addslashes(lang('xnx_pandown_code_copied'));?>', 'success');
+        }
+    });
+}
+</script>
+<?php endif; ?>

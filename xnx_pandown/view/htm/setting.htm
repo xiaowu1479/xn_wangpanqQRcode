@@ -1,0 +1,75 @@
+<?php include _include(ADMIN_PATH . 'view/htm/header.inc.htm');?>
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h3><?php echo lang('xnx_pandown_setting_title');?></h3>
+                <form method="post" action="<?php echo url('plugin-setting-xnx_pandown');?>" id="form_setting">
+                    <input type="hidden" name="op" value="save">
+                    <?php echo CsrfService::input();?>
+                    <table class="table">
+                        <tr>
+                            <th style="width:200px;"><?php echo lang('xnx_pandown_clear_qrcode');?></th>
+                            <td>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" name="clear_qrcode" value="1" <?php echo $setting['clear_qrcode'] ? 'checked' : '';?>>
+                                    <?php echo lang('xnx_pandown_clear_qrcode_desc');?>
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><?php echo lang('xnx_pandown_qr_cache');?></th>
+                            <td>
+                                <button type="button" class="btn btn-danger" id="btn_clear"><?php echo lang('xnx_pandown_clear_btn');?></button>
+                                <span class="text-muted ms-2 small"><?php echo lang('xnx_pandown_clear_desc');?></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><?php echo lang('xnx_pandown_save_btn');?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.getElementById('form_setting').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var form = this;
+    var fd = new FormData(form);
+    fetch(form.getAttribute('action'), {
+        method: 'POST',
+        body: fd,
+        headers: {'X-Requested-With': 'XMLHttpRequest'}
+    }).then(function(r) { return r.json(); }).then(function(res) {
+        if (typeof XN !== 'undefined' && XN.toast) {
+            XN.toast(res.message, res.code == 0 ? 'success' : 'danger');
+        }
+    });
+});
+document.getElementById('btn_clear').addEventListener('click', function() {
+    if (!confirm('<?php echo lang('xnx_pandown_clear_confirm');?>')) return;
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = '<?php echo lang('xnx_pandown_clearing');?>';
+    fetch('<?php echo url('plugin-setting-xnx_pandown');?>', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: 'op=clear&_csrf=' + encodeURIComponent(document.querySelector('input[name="_csrf"]') ? document.querySelector('input[name="_csrf"]').value : '')
+    }).then(function(r) { return r.json(); }).then(function(res) {
+        btn.disabled = false;
+        btn.textContent = '<?php echo lang('xnx_pandown_clear_btn');?>';
+        if (typeof XN !== 'undefined' && XN.toast) {
+            XN.toast(res.message, res.code == 0 ? 'success' : 'danger');
+        }
+    }).catch(function() {
+        btn.disabled = false;
+        btn.textContent = '<?php echo lang('xnx_pandown_clear_btn');?>';
+    });
+});
+</script>
+<?php include _include(ADMIN_PATH . 'view/htm/footer.inc.htm');?>
